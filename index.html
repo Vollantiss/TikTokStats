@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14161b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Views Tracker">
+  <title>Views Tracker</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+
+  <!-- Вход по паролю -->
+  <div id="gate" class="gate hidden">
+    <div class="panel gate-box">
+      <div class="logo big"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div>
+      <h2>Views Tracker</h2>
+      <p class="muted">Введите пароль</p>
+      <form id="gateForm">
+        <input id="gatePass" class="field" type="password" placeholder="Пароль" autocomplete="current-password">
+        <button class="btn-primary wide" type="submit">Войти</button>
+      </form>
+      <p id="gateErr" class="err"></p>
+    </div>
+  </div>
+
+  <main id="app" class="app hidden">
+    <header class="top" id="home">
+      <div class="logo"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div>
+      <div class="hello">
+        <div class="muted small" id="greet">Добрый день 👋</div>
+        <div class="title">Views Tracker</div>
+      </div>
+      <button class="round" id="btnSettings" aria-label="Настройки"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </header>
+
+    <form class="search" id="addForm">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="addInput" placeholder="@ник или ссылка на профиль" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="add-mini" type="submit" aria-label="Добавить"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    </form>
+
+    <section>
+      <div class="sec-head"><h3>Аккаунты</h3><span class="link" id="accCount"></span></div>
+      <div class="hscroll" id="accChips"></div>
+    </section>
+
+    <section id="stats">
+      <div class="sec-head"><h3 id="statsTitle">Статистика</h3><span class="muted small" id="updated"></span></div>
+      <div class="grid6" id="metrics"></div>
+    </section>
+
+    <section id="charts">
+      <div class="sec-head"><h3>Динамика</h3></div>
+      <div class="panel hero">
+        <div class="notch"></div>
+        <div class="hero-head">
+          <div>
+            <div class="hero-title" id="chartTitle">Просмотры</div>
+            <div class="muted small" id="chartSub"></div>
+          </div>
+          <select id="chartMetric" class="select">
+            <option value="views">Просмотры</option>
+            <option value="followers">Подписчики</option>
+            <option value="likes">Лайки</option>
+            <option value="comments">Комментарии</option>
+            <option value="shares">Репосты</option>
+          </select>
+        </div>
+        <div id="chart" class="chart"></div>
+        <div class="divider"></div>
+        <div class="pills" id="rangePills">
+          <button data-r="7" class="pill"><small>Дней</small><b>7</b></button>
+          <button data-r="14" class="pill"><small>Дней</small><b>14</b></button>
+          <button data-r="30" class="pill on"><small>Дней</small><b>30</b></button>
+          <button data-r="90" class="pill"><small>Дней</small><b>90</b></button>
+          <button data-r="0" class="pill"><small>Всё</small><b>∞</b></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="ranking">
+      <div class="sec-head">
+        <h3>Рейтинг</h3>
+        <button class="btn-primary sm" id="btnRefresh"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg><span>Обновить всё</span></button>
+      </div>
+      <div class="panel pad">
+        <div class="seg" id="rankSeg">
+          <button data-k="views" class="on">Просмотры</button>
+          <button data-k="followers">Подписчики</button>
+          <button data-k="growth">Рост 24 ч</button>
+        </div>
+        <div id="rankList" class="list"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><h3>Растут сейчас</h3><span class="muted small">за 24 ч</span></div>
+      <div id="rising" class="timeline"></div>
+    </section>
+
+    <section>
+      <div class="sec-head"><h3>Топ видео</h3>
+        <div class="seg mini" id="topSeg">
+          <button data-k="plays" class="on">Просм.</button>
+          <button data-k="likes">Лайки</button>
+          <button data-k="created">Новые</button>
+        </div>
+      </div>
+      <div id="topVideos" class="vlist"></div>
+      <button class="ghost wide" id="moreVideos">Показать ещё</button>
+    </section>
+
+    <p class="foot muted small" id="foot"></p>
+    <div style="height:110px"></div>
+  </main>
+
+  <nav class="dock hidden" id="dock">
+    <a href="#home" aria-label="Главная" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></a>
+    <a href="#ranking" aria-label="Рейтинг"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></a>
+    <button class="fab" id="fab" aria-label="Добавить аккаунт"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <a href="#charts" aria-label="Графики"><svg viewBox="0 0 24 24"><path d="M12 3v9h9A9 9 0 1 1 12 3z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></a>
+    <button id="dockSettings" aria-label="Настройки"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><i class="dot hidden" id="errDot"></i></button>
+  </nav>
+
+  <!-- Настройки -->
+  <div class="sheet-wrap hidden" id="sheet">
+    <div class="sheet panel">
+      <div class="grab"></div>
+      <div class="sec-head"><h3>Настройки</h3><button class="round sm" id="closeSheet" aria-label="Закрыть"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+
+      <div class="card">
+        <div class="card-t">GitHub-токен</div>
+        <p class="muted small">Нужен, чтобы добавлять/удалять аккаунты и запускать сбор с сайта. Хранится только в этом браузере.</p>
+        <input id="ghToken" class="field" type="password" placeholder="github_pat_…" autocomplete="off">
+        <div class="row"><button class="btn-primary sm" id="saveToken">Сохранить</button><span class="small" id="tokenState"></span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">Аккаунты</div>
+        <div id="manageList" class="list"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">Сбор данных</div>
+        <p class="muted small" id="collectInfo"></p>
+        <div class="row wrap">
+          <button class="ghost sm" data-mode="quick">Быстрый сбор</button>
+          <button class="ghost sm" data-mode="full">Полный пересчёт</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">Экспорт CSV</div>
+        <div class="row wrap">
+          <button class="ghost sm" id="csvHistory">История по дням</button>
+          <button class="ghost sm" id="csvVideos">Все видео</button>
+        </div>
+      </div>
+
+      <button class="ghost wide" id="logout">Выйти</button>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
