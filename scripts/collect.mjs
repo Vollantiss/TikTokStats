@@ -94,7 +94,9 @@ function upsertVideo(u, v) {
   if (!acc || !v.id) return;
   const old = acc.videos[v.id] || { h: [] };
   const h = (old.h || []).filter(([t]) => now - new Date(t) < HIST_KEEP_MS);
-  if (!h.length || h[h.length - 1][1] !== v.plays) h.push([nowIso, v.plays]);
+  const entry = [nowIso, v.plays, v.likes, v.comments, v.shares, v.saves];
+  const prev = h[h.length - 1];
+  if (!prev || entry.slice(1).some((x, i) => prev[i + 1] !== x)) h.push(entry);
   const { owner, ...rest } = v;
   acc.videos[v.id] = { ...old, ...rest, cover: rest.cover || old.cover || "", h };
 }

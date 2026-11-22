@@ -24,6 +24,7 @@
   let H = { points: [] };                      // data/history.json
   let ACC = [];                                // accounts.json
   let sel = LS.get("sel", "all");
+  let statMode = LS.get("statMode", "all");
   let rankKey = "views", topKey = "plays", topLimit = 10, range = 30, chartMetric = "views";
 
   // ---------- форматирование ----------
@@ -216,16 +217,49 @@
     $("#accChips").innerHTML = h;
   }
 
+  // h: [t, plays, likes, comments, shares, saves]
+  const VMET = [
+    { k: "plays", i: 1, t: "Просмотры", c: "var(--blue)" },
+    { k: "likes", i: 2, t: "Лайки", c: "var(--red)" },
+    { k: "comments", i: 3, t: "Комменты", c: "var(--purple)" },
+    { k: "shares", i: 4, t: "Репосты", c: "var(--green)" },
+    { k: "saves", i: 5, t: "Сохранения", c: "var(--orange)" },
+  ];
+  function vDelta(v, i) {
+    const h = (v.h || []).filter((e) => e.length > i);
+    if (h.length < 2) return null;
+    const target = new Date(h[h.length - 1][0]) - DAY;
+    let base = h[0];
+    for (const e of h) { if (new Date(e[0]) <= target) base = e; else break; }
+    return h[h.length - 1][i] - base[i];
+  }
+  function renderLastVideo() {
+    const v = videosOf(selected()).filter((x) => x.created).sort((a, b) => String(b.created).localeCompare(String(a.created)))[0];
+    if (!v) { $("#lastVideo").innerHTML = ""; $("#metrics").innerHTML = `<div class="panel empty-box" style="grid-column:1/-1">Видео появятся после первого сбора</div>`; return; }
+    $("#lastVideo").innerHTML = vcard(v, `<span class="chip">опубликовано ${age(v.created)} назад</span>`);
+    const er = v.plays ? ((v.likes + v.comments + v.shares) / v.plays) * 100 : 0;
+    $("#metrics").innerHTML = VMET.map((m) => {
+      const d = vDelta(v, m.i);
+      return `<div class="panel metric" style="--c:${m.c}"><div class="k">${m.t}</div><div class="v">${fmt(v[m.k])}</div>
+        <span class="delta ${dCls(d)}">${fmtD(d)}</span><small>24 ч</small></div>`;
+    }).join("") + `<div class="panel metric" style="--c:#8b909c"><div class="k">Вовлечённость</div><div class="v">${er.toFixed(1).replace(".", ",")}%</div>
+        <span class="delta">ER</span></div>`;
+  }
+
   function renderMetrics() {
     const users = selected();
-    const t = sumTotals(users);
+    $("#statToggle").classList.toggle("last", statMode === "last");
+    $$("#statToggle button").forEach((b) => b.classList.toggle("on", b.dataset.m === statMode));
+    $("#updated").textContent = S.updated ? "обновлено " + ago(S.updated) : "";
     $("#statsTitle").textContent = sel === "all" ? "Статистика" : profileOf(sel)?.nickname || "@" + sel;
+    if (statMode === "last") return renderLastVideo();
+    $("#lastVideo").innerHTML = "";
+    const t = sumTotals(users);
     $("#metrics").innerHTML = METRICS.map((m) => {
       const d = sumDelta(users, m.k);
       return `<div class="panel metric" style="--c:${m.c}"><div class="k">${m.t}</div><div class="v">${fmt(t?.[m.k])}</div>
         <span class="delta ${dCls(d)}">${fmtD(d)}</span><small>24 ч</small></div>`;
     }).join("");
-    $("#updated").textContent = S.updated ? ago(S.updated) : "";
   }
 
   function renderChart() {
@@ -391,6 +425,7 @@
     $("#rankList").addEventListener("click", (e) => { const b = e.target.closest("[data-u]"); if (!b) return; sel = b.dataset.u; LS.set("sel", sel); renderAll(); window.scrollTo({ top: $("#stats").offsetTop - 10, behavior: "smooth" }); });
     $("#rankSeg").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; rankKey = b.dataset.k; $$("#rankSeg button").forEach((x) => x.classList.toggle("on", x === b)); renderRanking(); });
     $("#topSeg").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; topKey = b.dataset.k; topLimit = 10; $$("#topSeg button").forEach((x) => x.classList.toggle("on", x === b)); renderTop(); });
+    $("#statToggle").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b || b.dataset.m === statMode) return; statMode = b.dataset.m; LS.set("statMode", statMode); renderMetrics(); });
     $("#moreVideos").addEventListener("click", () => { topLimit += 10; renderTop(); });
     $("#rangePills").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; range = +b.dataset.r; $$("#rangePills .pill").forEach((x) => x.classList.toggle("on", x === b)); renderChart(); });
     $("#chartMetric").addEventListener("change", (e) => { chartMetric = e.target.value; renderChart(); });
