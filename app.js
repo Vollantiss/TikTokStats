@@ -459,6 +459,18 @@
     $$(".dock a").forEach((a) => a.addEventListener("click", () => { $$(".dock a").forEach((x) => x.classList.toggle("on", x === a)); }));
   }
 
+  // ---------- автообновление сайта (браузер кэширует страницу до 10 мин) ----------
+  const APP_V = "4";
+  async function checkVersion() {
+    try {
+      const html = await (await fetch(`./?t=${Date.now()}`, { cache: "no-store" })).text();
+      const m = html.match(/app\.js\?v=(\w+)/);
+      if (m && m[1] !== APP_V && !location.search.includes("v=" + m[1])) location.replace(`./?v=${m[1]}`);
+    } catch {}
+  }
+  checkVersion();
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkVersion(); });
+
   // ---------- старт ----------
   async function sha256(s) {
     const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
