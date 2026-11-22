@@ -14,7 +14,7 @@
     { k: "views", t: "Просмотры", c: "var(--blue)" },
     { k: "likes", t: "Лайки", c: "var(--red)" },
     { k: "followers", t: "Подписчики", c: "var(--orange)" },
-    { k: "comments", t: "Комментарии", c: "var(--purple)" },
+    { k: "comments", t: "Комменты", c: "var(--purple)" },
     { k: "shares", t: "Репосты", c: "var(--green)" },
     { k: "videos", t: "Видео", c: "#8b909c" },
   ];
@@ -30,7 +30,7 @@
   function fmt(n) {
     if (n == null || isNaN(n)) return "—";
     const a = Math.abs(n);
-    const s = (v, u) => (v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : v.toFixed(2)).replace(/\.?0+$/, "") + u;
+    const s = (v, u) => parseFloat(v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : v.toFixed(2)) + u;
     if (a >= 1e9) return (n < 0 ? "-" : "") + s(a / 1e9, "B");
     if (a >= 1e6) return (n < 0 ? "-" : "") + s(a / 1e6, "M");
     if (a >= 1e4) return (n < 0 ? "-" : "") + s(a / 1e3, "K");

@@ -17,7 +17,9 @@
   --r: 24px;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; }
+html, body { margin: 0; max-width: 100%; overflow-x: hidden; overflow-x: clip; overscroll-behavior-x: none; }
+html { touch-action: pan-y pinch-zoom; }
+.bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
 body {
   background: radial-gradient(120% 80% at 50% -10%, #232733 0%, var(--bg) 55%) fixed, var(--bg);
   color: var(--text);
@@ -39,7 +41,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .g2 { width: 260px; height: 260px; background: #ff3d68; top: 520px; right: -120px; opacity: .2; }
 .g3 { width: 240px; height: 240px; background: #ff9a2e; top: -80px; right: -60px; opacity: .14; }
 
-.app { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: calc(18px + env(safe-area-inset-top)) 16px 0; }
+.app { position: relative; z-index: 1; overflow-x: clip; max-width: 520px; margin: 0 auto; padding: calc(18px + env(safe-area-inset-top)) 16px 0; }
 
 /* шапка */
 .top { display: flex; align-items: center; gap: 14px; margin: 6px 0 20px; }
@@ -106,11 +108,10 @@ section { margin-bottom: 28px; }
 .all-ico svg { width: 16px; height: 16px; stroke: #fff; }
 
 /* метрики */
-.grid6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-@media (max-width: 400px) { .grid6 { grid-template-columns: repeat(2, 1fr); } }
-.metric { padding: 14px 14px 13px; position: relative; overflow: hidden; }
-.metric .k { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-.metric .v { font-size: 24px; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 8px; }
+.grid6 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.metric { padding: 14px 12px 13px; position: relative; overflow: hidden; min-width: 0; }
+.metric .k { font-size: 10.5px; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.metric .v { font-size: 22px; white-space: nowrap; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 8px; }
 .metric::before { content: ""; position: absolute; left: 0; top: 14px; width: 3px; height: 16px; border-radius: 0 3px 3px 0; background: var(--c, var(--blue)); }
 .delta { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,.06); color: var(--muted); }
 .delta.up { color: var(--green); background: rgba(61, 220, 132, .12); }
